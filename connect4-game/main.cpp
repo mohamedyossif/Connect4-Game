@@ -11,66 +11,62 @@ void drowBoard(char matrix[6][7])
 			if (i == 0)
 			{
 				break;
-				}
+			}
+			else if (j == 6)
+			{
 				cout << "-----";
+			}
+			else {
+				cout << "----";
+			}
 
 		}
 		cout << endl;
 		for (int j = 0; j < 8; j++)
-		{
-			if (i == 6 )
+		{	// to ignore one line 
+			if (i == 6)
 			{
 				break;
-				}
-			else if (j==7)
+			}
+			else if (j == 7)
 			{
 				cout << "|";
 			}
 			else
-			{	
-				// check if 2 digit don`t add 0 if one digit add 0 before num
-				if (matrix[i][j] == '#' || matrix[i][j] == '%')
-				{
-					cout << "|  " << matrix[i][j] << " ";
-				}
-				else {
-					int number = matrix[i][j] - '0';
-					if (number > 9)
-					{
-						cout << "| " << number << " ";
-					}
-					else {
-						cout << "|  " << number << " ";
-					}
-				}
-				
+			{
+				cout << "| " << matrix[i][j] << " ";
 			}
-				
+
 		}
 		cout << endl;
 	}
+	for (int i = 0; i < 7; i++)
+	{
+		cout<<"  " << i + 1<<" ";
+	}
+	cout << endl;
 }
 char checkWinner(char matrix[6][7])
 {
 	for (int i = 5; i > -1; --i) {
 
 		for (int j = 0; j < 7; ++j) {
+
 			int right = j + 4;
 			bool primayDi = (j - 3 > -1) && (i - 3 > -1);
 			bool secandaryDi = (j + 3 < 7) && (i - 3 > -1);
-			if (right <= 7 )
+			//check 
+			if (right <= 7)
 			{
 				if (matrix[i][j] == matrix[i][j + 1] && matrix[i][j + 1] == matrix[i][j + 2] && matrix[i][j + 2] == matrix[i][j + 3])
 				{
 					return matrix[i][j];
 				}
-
-				
 			}
 
-			if (i >= 3 )
+			if (i >= 3)
 			{
-				if (matrix[i][j] == matrix[i-1][j] && matrix[i - 1][j] == matrix[i - 2][j] && matrix[i - 2][j] == matrix[i - 3][j])
+				if (matrix[i][j] == matrix[i - 1][j] && matrix[i - 1][j] == matrix[i - 2][j] && matrix[i - 2][j] == matrix[i - 3][j])
 				{
 					return matrix[i][j];
 
@@ -86,93 +82,84 @@ char checkWinner(char matrix[6][7])
 			}
 			if (secandaryDi)
 			{
-			
+
 				if (matrix[i][j] == matrix[i - 1][j + 1] && matrix[i - 1][j + 1] == matrix[i - 2][j + 2] && matrix[i - 2][j + 2] == matrix[i - 3][j + 3])
 				{
-					
+
 					return matrix[i][j];
 				}
 			}
 		}
 	}
+
 }
-array<int, 2> FindIndex(char matrix[6][7], int postion)
+bool FindEmptySlot(char matrix[6][7], int slot,char value)
 {
-	for (int i = 0; i < 6; i++)
+	for (int i = 5; i > -1; i--)
 	{
-		for (int j = 0; j < 7; j++)
+
+		if (matrix[i][slot] == ' ')
 		{
-			// Converts character digits to integer values using ASCII.
-			// Subtracting '0' from the character converts it to the integer value by leveraging ASCII values. 
-			int number = matrix[i][j] - '0';
-
-			if (number == postion)
-			{
-
-				return  array<int, 2> {i, j};
-			}
-
-
+			matrix[i][slot] = value;
+			return true;
 		}
-		cout << endl;
+
 	}
+	return false;
 }
 void main()
-{	
-	char matrix[6][7] ;
-	int defValue = 1;
+{
+	char matrix[6][7];
+	//initization
 	for (int i = 5; i > -1; --i) {
 		for (int j = 0; j < 7; ++j) {
-			matrix[i][j] =defValue + '0';
-			defValue++;
+			matrix[i][j] = ' ';
+		
 		}
 	}
-	
 	int gameRounds = 0;
-	int postion;
+	int slot;
 	char whoWinner;
 	bool isHash = true;
+	bool isEmpty = true;
 	do {
 		drowBoard(matrix);
-		char XOrO = isHash ? '#' : '%';
-		cout << "Enter postion from just 1 to 42  player " << XOrO << " : ";
-		cin >> postion;
+		char XOrO = isHash ? 'X' : 'O';
+		cout << "Enter slot number from just 1 to 7  player " << XOrO << " : ";
+		cin >> slot;
 		//if user enter invalid number 
-		while (postion < 1 || postion>42)
+		while (slot < 1 || slot>7)
 		{
-			cout << "Invalid Value sir ,Plz Enter postion from just 1 to 9  player " << XOrO << " : ";
-			cin >> postion;
+			cout << "Invalid Value sir ,Plz Enter column from just 1 to 7  player " << XOrO << " : ";
+			cin >> slot;
 		}
-		array<int, 2>	arr = FindIndex(matrix, postion);
-		cout << arr[0] << endl;
-		
-		while (arr[0]<5 && matrix[arr[0]+1][arr[1]]!= '#' && matrix[arr[0] +1][arr[1]]!='%')
+	bool isEmpty=	FindEmptySlot(matrix, slot-1, XOrO);
+	while (!isEmpty)
+	{
+		cout << "Invalid Value sir ,Plz Enter column must be empty  " << XOrO << " : ";
+		cin >> slot;
+		isEmpty = FindEmptySlot(matrix, slot - 1, XOrO);
+	}
+		// avoid unnecessary checks, 
+		if (gameRounds >= 6)
 		{
-			cout << arr[0] - 1 << " " << arr[1] - 1 << endl;
-			cout << "Invalid move! You must fill the lower slots in the column first." << XOrO << " : ";
-			cin >> postion;
-			arr = FindIndex(matrix, postion);
-		}
-		//store value in postion whihc user entered
-		
-		matrix[arr[0]][arr[1]] = XOrO;
-		//To reduce the number of checkWinner operations from 9 to 6 and avoid unnecessary checks, 
-			
 			whoWinner = checkWinner(matrix);
-			if (whoWinner == '#' || whoWinner == '%')
-			{
-				cout << "Winner is " << whoWinner << endl;
+			if (whoWinner == 'X' || whoWinner == 'O')
+			{	
+				cout << " \n \n Winner is " << whoWinner << endl;
 				drowBoard(matrix);
-				break;
+				return;
 			}
+		}
 		
+
 		isHash = !isHash;
 		gameRounds++;
 		//clean console
-		 system("cls");
+		system("cls");
 	} while (gameRounds < 42);
 
-	if (whoWinner != '#' && whoWinner != '%')
+	if (whoWinner != 'X' && whoWinner != 'O')
 	{
 		cout << "Game Over " << endl;
 	}
