@@ -2,6 +2,15 @@
 #include <cctype>
 #include<array>
 using namespace std;
+void initizalization(char matrix[6][7])
+{
+	for (int i = 5; i > -1; --i) {
+		for (int j = 0; j < 7; ++j) {
+			matrix[i][j] = ' ';
+
+		}
+	}
+}
 void drowBoard(char matrix[6][7])
 {
 	for (int i = 0; i < 7; i++)
@@ -40,6 +49,7 @@ void drowBoard(char matrix[6][7])
 		}
 		cout << endl;
 	}
+	// draw 1 to 6 slot
 	for (int i = 0; i < 7; i++)
 	{
 		cout<<"  " << i + 1<<" ";
@@ -53,9 +63,10 @@ char checkWinner(char matrix[6][7])
 		for (int j = 0; j < 7; ++j) {
 
 			int right = j + 4;
+			
 			bool primayDi = (j - 3 > -1) && (i - 3 > -1);
 			bool secandaryDi = (j + 3 < 7) && (i - 3 > -1);
-			//check 
+			//check right
 			if (right <= 7)
 			{
 				if (matrix[i][j] == matrix[i][j + 1] && matrix[i][j + 1] == matrix[i][j + 2] && matrix[i][j + 2] == matrix[i][j + 3])
@@ -63,7 +74,7 @@ char checkWinner(char matrix[6][7])
 					return matrix[i][j];
 				}
 			}
-
+			//check top
 			if (i >= 3)
 			{
 				if (matrix[i][j] == matrix[i - 1][j] && matrix[i - 1][j] == matrix[i - 2][j] && matrix[i - 2][j] == matrix[i - 3][j])
@@ -72,6 +83,7 @@ char checkWinner(char matrix[6][7])
 
 				}
 			}
+			//check top
 			if (primayDi)
 			{
 				if (matrix[i][j] == matrix[i - 1][j - 1] && matrix[i - 1][j - 1] == matrix[i - 2][j - 2] && matrix[i - 2][j - 2] == matrix[i - 3][j - 3])
@@ -111,12 +123,7 @@ void main()
 {
 	char matrix[6][7];
 	//initization
-	for (int i = 5; i > -1; --i) {
-		for (int j = 0; j < 7; ++j) {
-			matrix[i][j] = ' ';
-		
-		}
-	}
+	initizalization(matrix);
 	int gameRounds = 0;
 	int slot;
 	char whoWinner;
@@ -127,19 +134,15 @@ void main()
 		char XOrO = isHash ? 'X' : 'O';
 		cout << "Enter slot number from just 1 to 7  player " << XOrO << " : ";
 		cin >> slot;
+		bool isEmpty = FindEmptySlot(matrix, slot - 1, XOrO);
 		//if user enter invalid number 
-		while (slot < 1 || slot>7)
+		while (slot < 1 || slot>7 || !isEmpty)
 		{
 			cout << "Invalid Value sir ,Plz Enter column from just 1 to 7  player " << XOrO << " : ";
 			cin >> slot;
+			isEmpty = FindEmptySlot(matrix, slot - 1, XOrO);
 		}
-	bool isEmpty=	FindEmptySlot(matrix, slot-1, XOrO);
-	while (!isEmpty)
-	{
-		cout << "Invalid Value sir ,Plz Enter column must be empty  " << XOrO << " : ";
-		cin >> slot;
-		isEmpty = FindEmptySlot(matrix, slot - 1, XOrO);
-	}
+	
 		// avoid unnecessary checks, 
 		if (gameRounds >= 6)
 		{
@@ -152,7 +155,6 @@ void main()
 			}
 		}
 		
-
 		isHash = !isHash;
 		gameRounds++;
 		//clean console
